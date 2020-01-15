@@ -2,7 +2,6 @@
 
 use Dingo\Api\Routing\Router;
 
-/** @var Dingo\Api\Routing\Router $router */
 $router = app(Router::class);
 
 $router->version('v1', function (Router $router) {
@@ -15,5 +14,12 @@ $router->version('v1', function (Router $router) {
             $router->get('ping', 'ServerController@ping');
             $router->get('version', 'ServerController@version');
         });
+
+        // Weather
+        $router->group(['prefix' => 'weather'], function (Router $router) {
+            $router->get('city/{city}/current', 'QueryController@current');
+            $router->get('city/{city}/all', 'QueryController@all');
+        });
+
     });
 });
