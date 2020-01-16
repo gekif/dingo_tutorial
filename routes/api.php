@@ -21,5 +21,7 @@ $router->version('v1', function (Router $router) {
             $router->get('city/{city}/all', 'QueryController@all');
         });
 
+        $router->resource('users', 'UsersController');
+
     });
 });
