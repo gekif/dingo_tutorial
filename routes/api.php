@@ -23,5 +23,18 @@ $router->version('v1', function (Router $router) {
 
         $router->resource('users', 'UsersController');
 
+        // Auth routes
+        $router->group(['prefix' => 'auth'], function (Router $router) {
+            $router->post('login', 'Auth\AuthsController@login');
+            $router->patch('refresh', 'Auth\AuthsController@refreshToken');
+            $router->delete('invalidate', 'Auth\AuthsController@deleteInvalidate');
+            $router->post('register', 'Auth\AuthsController@register');
+
+            $router->group(['middleware' => ['api.auth']], function (Router $router) {
+                $router->get('user', 'Auth\AuthsController@getUser');
+            });
+        });
+
+
     });
 });
