@@ -12,8 +12,8 @@ class PaginationListener
             // from
             if (!array_key_exists('from', $event->content['meta']['pagination'])) {
                 $event->content['meta']['pagination']['from'] = (
-                        ($event->content['meta']['pagination']['current_page'] - 1)
-                        * $event->content['meta']['pagination']['per_page']
+                    ($event->content['meta']['pagination']['current_page'] - 1)
+                    * $event->content['meta']['pagination']['per_page']
                     ) + 1;
             }
             //  to

@@ -2,49 +2,47 @@
 
 namespace App\Services;
 
-use App\Models\WeatherStats;
+use App\Models\WeatherStat;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use App\Interfaces\IQueryService;
 use Illuminate\Support\Collection;
 
-class ApixuService
+class ApixuService implements IQueryService
 {
-    public function query(string $apiKey, Collection $cities) : Collection
+    /**
+     * @param string $apiKey
+     * @param Collection $cities
+     * @return Collection of City objects
+     */
+    public function query(string $apiKey, Collection $cities): Collection
     {
         $result = collect();
 
-
         $guzzleClient = new Client([
-            'base_uri' => 'http://api.weatherstack.com',
+            'base_uri' => 'https://api.apixu.com',
         ]);
 
-
         foreach ($cities as $city) {
-            $response = $guzzleClient->get('current', [
+            $response = $guzzleClient->get('v1/current.json', [
                 'query' => [
-                    'access_key' => $apiKey,
-                    'query' => $city->name
+                    'key' => $apiKey,
+                    'q' => $city->name
                 ]
             ]);
-
             $response = json_decode($response->getBody()->getContents(), true);
 
-            $stat = new WeatherStats();
-
+            $stat = new WeatherStat();
             $stat->city()->associate($city);
-            $stat->temp_celcius = sprintf("%.2f", $response['current']['temperature']);
-            $stat->status = $response['current']['weather_descriptions'][0] ? $response['current']['weather_descriptions'][0] : "";
-            $stat->last_update = Carbon::createFromTimestamp($response['location']['localtime_epoch']);
-            $stat->provider = 'weatherstack.com';
-
+            $stat->temp_celsius = $response['current']['temp_c'];
+            $stat->status = $response['current']['condition']['text'];
+            $stat->last_update = Carbon::createFromTimestamp($response['current']['last_updated_epoch']);
+            $stat->provider = 'apixu.com';
             $stat->save();
 
             $result->push($stat);
-
         }
 
         return $result;
-
-//        return var_dump($result);
     }
 }

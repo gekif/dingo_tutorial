@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $users = factory(User::class)->times(50)->create();
+        $users = factory(User::class)->times(1)->create();
 
         foreach ($users as $user) {
             echo 'User generated. Email: ' . $user->email . PHP_EOL;

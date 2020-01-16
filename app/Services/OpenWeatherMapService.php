@@ -2,22 +2,26 @@
 
 namespace App\Services;
 
-use App\Models\WeatherStats;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use App\Models\WeatherStat;
+use App\Interfaces\IQueryService;
 use Illuminate\Support\Collection;
 
-class OpenWeatherMapService
+class OpenWeatherMapService implements IQueryService
 {
-    public function query(string $apiKey, Collection $cities) : Collection
+    /**
+     * @param string $apiKey
+     * @param Collection $cities
+     * @return Collection of City objects
+     */
+    public function query(string $apiKey, Collection $cities): Collection
     {
         $result = collect();
 
-
         $guzzleClient = new Client([
-            'base_uri' => 'http://api.openweathermap.org',
+            'base_uri' => 'https://api.openweathermap.org',
         ]);
-
 
         foreach ($cities as $city) {
             $response = $guzzleClient->get('data/2.5/weather', [
@@ -27,21 +31,19 @@ class OpenWeatherMapService
                     'q' => $city->name
                 ]
             ]);
-
             $response = json_decode($response->getBody()->getContents(), true);
 
-            $stat = new WeatherStats();
-
+            // https://openweathermap.org/weather-data#current
+            $stat = new WeatherStat();
             $stat->city()->associate($city);
-            $stat->temp_celcius = $response['main']['temp'];
-            $stat->status = $response['weather'][0] ? $response['weather'][0]['main'] : '';
-            $stat->last_update = Carbon::createFromTimestamp($response['dt']);
-            $stat->provider = 'openweathermap.com';
-
+            $stat->temp_celsius = $response['main']['temp'];
+            $stat->status = $response['weather'][0] ?
+                $response['weather'][0]['main'] : '';
+            $stat->last_update = Carbon::createFromTimestamp($response['dt']); // 	Data receiving time
+            $stat->provider = 'openweathermap.org';
             $stat->save();
 
             $result->push($stat);
-
         }
 
         return $result;

@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\City;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
 
 class CitySeeder extends Seeder
 {
@@ -23,7 +23,7 @@ class CitySeeder extends Seeder
 
         foreach ($cities as $city) {
             City::firstOrCreate([
-                'name' => $city
+               'name' => $city,
             ]);
         }
 

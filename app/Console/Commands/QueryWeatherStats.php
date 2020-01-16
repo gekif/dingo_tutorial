@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Services\QueryService;
 use Illuminate\Console\Command;
-use Mockery\Exception;
 
 class QueryWeatherStats extends Command
 {
@@ -20,14 +19,14 @@ class QueryWeatherStats extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Query from all external services';
 
     protected $queryService;
 
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param QueryService $queryService
      */
     public function __construct(QueryService $queryService)
     {
@@ -45,16 +44,15 @@ class QueryWeatherStats extends Command
     {
         $this->info('Query started...');
 
-        try {
+        try{
             $this->queryService->queryAll();
-
-        } catch (Exception $exception) {
-
+        } catch (\Exception $exception) {
             $this->error($exception->getMessage());
             return 1;
-
         }
 
-        $this->info('Query successful');
+        $this->info('Query succesful!');
+
+        return 0;
     }
 }
