@@ -65,4 +65,12 @@ class AuthController extends Controller
     {
         return $this->userService->create($request->all());
     }
+
+    public function invalidate()
+    {
+        $token = $this->authService->parseToken();
+        $token->invalidate();
+
+        return $this->success();
+    }
 }

@@ -16,7 +16,7 @@ class QueryController extends Controller
             throw new NotFoundHttpException('Unknown city!');
 
 
-        return $this->response->item($city->weatherStats()->first(), new WeatherStatTransformer());
+        return $this->response->item($city->weatherStats()->first() ?? collect(), new WeatherStatTransformer());
     }
 
     public function all($city) {

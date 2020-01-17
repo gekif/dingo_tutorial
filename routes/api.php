@@ -17,16 +17,15 @@ $router->version('v1', function (Router $router) {
         $router->group(['prefix' => 'auth'], function (Router $router) {
             $router->post('login', 'Auth\AuthController@login');
             $router->patch('refresh', 'Auth\AuthController@refreshToken');
-            $router->delete('invalidate', 'Auth\AuthController@deleteInvalidate');
+            $router->delete('invalidate', 'Auth\AuthController@invalidate');
             $router->post('register', 'Auth\AuthController@register');
 
             $router->group(['middleware' => ['api.auth']], function (Router $router) {
-//            $router->group(['middleware' => ['api.auth', 'role:user']], function (Router $router) {
                 $router->get('user', 'Auth\AuthController@getUser');
             });
         });
 
-        $router->group(['middleware' => ['api.auth', 'permission:query-temperature']], function (Router $router) {
+        $router->group(['middleware' => ['api.auth']], function (Router $router) {
             $router->group(['prefix' => 'weather'], function (Router $router) {
                 $router->get('city/{city}/current', 'QueryController@current');
                 $router->get('city/{city}/all', 'QueryController@all');

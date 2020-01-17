@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
-class TestCommand extends Command
+class Test extends Command
 {
     /**
      * The name and signature of the console command.
@@ -19,12 +19,11 @@ class TestCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Run phpunit test';
+    protected $description = 'Run the phpunit tests';
 
     /**
      * Create a new command instance.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -35,23 +34,23 @@ class TestCommand extends Command
      * Execute the console command.
      *
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function handle()
     {
         $timeLimit = 320;
-
         set_time_limit($timeLimit);
 
-        $process = new Process(
-            'vendor' . DIRECTORY_SEPARATOR .
-            'bin' . DIRECTORY_SEPARATOR . 'phpunit -c phpunit.xml');
-
+        $process = new Process('vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR .
+            'phpunit -c phpunit.xml');
         $process->setWorkingDirectory(base_path());
-
         $process->setTimeout($timeLimit);
 
-        return $process->run(function ($type, $buffer) {
+        $returnValue = $process->run(function ($type, $buffer) {
             echo $buffer;
         });
+
+        return $returnValue;
     }
 }
